@@ -13,8 +13,8 @@ $(function () {
     var direction = 'down';
     var keyReleased = true;
     var snake = [
-        { x: 10, y: 10, oldX: 0, oldY: 0 },
         { x: 10, y: 20, oldX: 0, oldY: 0 },
+        { x: 10, y: 10, oldX: 0, oldY: 0 },
     ];
     var gameLoop;
 
