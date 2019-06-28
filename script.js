@@ -5,16 +5,16 @@ $(function () {
     var canvas = $('#canvas')[0];
     var ctx = canvas.getContext('2d');
 
-    var cHeight = 500;
-    var cWidth = 500;
+    var cHeight = 400;
+    var cWidth = 400;
     var snakeHeight = 10;
     var snakeWidth = 10;
-    var disp = 10;
+    var disp = 5;
     var direction = 'down';
     var keyReleased = true;
     var snake = [
-        { x: 10, y: 10, oldX: 10, oldY: 10 },
-        { x: 10, y: 20, oldX: 10, oldY: 20 },
+        { x: 10, y: 10, oldX: 0, oldY: 0 },
+        { x: 10, y: 20, oldX: 0, oldY: 0 },
     ];
     var gameLoop;
 
@@ -25,23 +25,21 @@ $(function () {
     }
 
     function startGame() {
-        gameLoop = setInterval(function () {
-            if (debug) {
-                console.log('Loop running');
-            }
-            fillSnake();
-        }, 500);
+        //gameLoop = requestAnimationFrame(fillSnake);
+        gameLoop = setInterval(fillSnake, 500);
     }
 
     function stopGame() {
+        //cancelAnimationFrame(gameLoop);
         clearInterval(gameLoop);
     }
 
     function fillSnake() {
+        console.log('Loop running')
         clearCanvas();
         ctx.fillStyle = 'red';
         $.each(snake, function (index, value) {
-            // debugger
+            debugger
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
             snake[index].oldX = value.x;
             snake[index].oldY = value.y;
@@ -64,6 +62,7 @@ $(function () {
                 snake[index].y = snake[index - 1].oldY;
             }
         });
+        //gameLoop = requestAnimationFrame(fillSnake);
     }
 
     function clearCanvas() {
