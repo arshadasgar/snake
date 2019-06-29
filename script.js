@@ -35,7 +35,7 @@ $(function () {
 
     function startGame() {
         // gameLoop = requestAnimationFrame(fillSnake);
-        gameLoop = setInterval(fillSnake, 200);
+        gameLoop = setInterval(fillSnake, 1000);
     }
 
     function stopGame() {
@@ -55,13 +55,13 @@ $(function () {
         ctx.fillStyle = 'red';
         $.each(snake, function (index, value) {
             // debugger
-            if (collided(value.x, value.y)) {
-                //stopGame();
-            }
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
             snake[index].oldX = value.x;
             snake[index].oldY = value.y;
             if (index == 0) {
+                if (collided(value.x, value.y)) {
+                    stopGame();
+                }
                 if (direction == 'down') {
                     snake[index].x = value.x;
                     snake[index].y = value.y + disp;
@@ -94,9 +94,9 @@ $(function () {
     }
 
     function collided(x, y) {
-        return snake.filter(item => {
-            return item.x == x && item.y == y
-        }).length > 0;
+        return snake.filter((item, index) => {
+            return index != 0 && item.x == x && item.y == y
+        }).length > 0 || x < 0 || x > cWidth || y < 0 || y > cHeight;
     }
 
     function clearCanvas() {
