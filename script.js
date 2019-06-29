@@ -6,15 +6,24 @@ $(function () {
     var ctx = canvas.getContext('2d');
 
     var cHeight = 400;
-    var cWidth = 400;
+    var cWidth = 600;
     var snakeHeight = 10;
     var snakeWidth = 10;
     var disp = 10;
     var direction = 'down';
     var keyReleased = true;
-    var snake = [
-        { x: 10, y: 20, oldX: 0, oldY: 0 },
-        { x: 10, y: 10, oldX: 0, oldY: 0 },
+    var snake = [{
+            x: 10,
+            y: 20,
+            oldX: 0,
+            oldY: 0
+        },
+        {
+            x: 10,
+            y: 10,
+            oldX: 0,
+            oldY: 0
+        },
     ];
     var gameLoop;
 
@@ -26,7 +35,7 @@ $(function () {
 
     function startGame() {
         // gameLoop = requestAnimationFrame(fillSnake);
-        gameLoop = setInterval(fillSnake, 400);
+        gameLoop = setInterval(fillSnake, 200);
     }
 
     function stopGame() {
@@ -34,14 +43,24 @@ $(function () {
         clearInterval(gameLoop);
     }
 
+    var counter = 0;
+
     function fillSnake() {
+        counter++;
+        if (counter % 2 == 0) {
+            addToSnake();
+        }
         console.log('Loop running')
         clearCanvas();
         ctx.fillStyle = 'red';
-        $.each(snake, function (index, objValue) {
-            debugger
-            let value = Object.assign({}, objValue);
+        $.each(snake, function (index, value) {
+            // debugger
+            if (collided(value.x, value.y)) {
+                //stopGame();
+            }
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
+            snake[index].oldX = value.x;
+            snake[index].oldY = value.y;
             if (index == 0) {
                 if (direction == 'down') {
                     snake[index].x = value.x;
@@ -60,14 +79,28 @@ $(function () {
                 snake[index].x = snake[index - 1].oldX;
                 snake[index].y = snake[index - 1].oldY;
             }
-            snake[index].oldX = value.x;
-            snake[index].oldY = value.y;
+            
+
+
         });
         // gameLoop = requestAnimationFrame(fillSnake);
     }
 
+    function addToSnake() {
+        snake.push({
+            x: snake[snake.length - 1].oldX,
+            y: snake[snake.length - 1].oldY
+        });
+    }
+
+    function collided(x, y) {
+        return snake.filter(item => {
+            return item.x == x && item.y == y
+        }).length > 0;
+    }
+
     function clearCanvas() {
-        ctx.clearRect(0, 0, cHeight, cWidth);
+        ctx.clearRect(0, 0, cWidth, cHeight);
     }
 
     $(document).keydown(function (e) {
