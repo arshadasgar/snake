@@ -36,7 +36,11 @@ $(function () {
             oldY: 0
         },
     ];
-    var food = {};
+    var food = {
+        x: 0,
+        y: 0,
+        eaten: true
+    };
     var gameLoop;
 
     init();
@@ -47,7 +51,7 @@ $(function () {
 
     function startGame() {
         // gameLoop = requestAnimationFrame(fillSnake);
-        gameLoop = setInterval(fillSnake, 400);
+        gameLoop = setInterval(fillSnake, 100);
     }
 
     function stopGame() {
@@ -58,13 +62,9 @@ $(function () {
     var counter = 0;
 
     function fillSnake() {
-        fillFood();
-        counter++;
-        if (counter % 2 == 0) {
-            // addToSnake();
-        }
         console.log('Loop running')
         clearCanvas();
+        fillFood();
         ctx.fillStyle = 'yellow';
         $.each(snake, function (index, value) {
             // debugger
@@ -74,6 +74,10 @@ $(function () {
             if (index == 0) {
                 if (collided(value.x, value.y)) {
                     stopGame();
+                }
+                if (eaten(value.x, value.y)) {
+                    food.eaten = true;
+                    addToSnake();
                 }
                 changeDirection(keyPressed);
             } else {
@@ -86,8 +90,8 @@ $(function () {
 
     function addToSnake() {
         snake.push({
-            x: snake[snake.length - 1].oldX,
-            y: snake[snake.length - 1].oldY
+            x: snake[snake.length - 1].x,
+            y: snake[snake.length - 1].y
         });
     }
 
@@ -97,34 +101,47 @@ $(function () {
         }).length > 0 || x < 0 || x > cWidth || y < 0 || y > cHeight;
     }
 
+    function eaten(x, y) {
+        return (x == food.x && y == food.y);
+    }
+
     function fillFood() {
         ctx.fillStyle = 'red';
         xy = getPositionForFood();
         x = xy.x;
         y = xy.y;
-        debugger
+        food = {
+            x: x,
+            y: y,
+            eaten: false
+        };
         ctx.fillRect(x, y, snakeWidth, snakeHeight);
     }
 
     function getPositionForFood() {
-        let xArray = yArray = [];
-        let xy = {};
-        $.each(snake, function (index, value) {
-            if ($.inArray(value.x, xArray) == -1) {
-                xArray.push(value.x);
-            }
-            if ($.inArray(value.y, yArray) == -1) {
-                yArray.push(value.y);
-            }
-        });
-        xy = getEmptyPosition(xArray, yArray);
+        let xy;
+        if (food.eaten == true) {
+            let xArray = yArray = [];
+            $.each(snake, function (index, value) {
+                if ($.inArray(value.x, xArray) == -1) {
+                    xArray.push(value.x);
+                }
+                if ($.inArray(value.y, yArray) == -1) {
+                    yArray.push(value.y);
+                }
+            });
+            xy = getEmptyPosition(xArray, yArray);
+            return xy;
+        } else {
+            xy = food;
+        }
         return xy;
     }
 
     function getEmptyPosition(xArray, yArray) {
         let newXY = {};
-        newX = getRandomNumber(cWidth, 10);
-        newY = getRandomNumber(cHeight, 10);
+        newX = getRandomNumber(cWidth - 10, 10);
+        newY = getRandomNumber(cHeight - 10, 10);
         if ($.inArray(newX, xArray) == -1 && $.inArray(newY, yArray) == -1) {
             newXY.x = newX;
             newXY.y = newY;
@@ -145,42 +162,64 @@ $(function () {
     }
 
     $(document).keydown(function (e) {
-        keyReleased = false;
         keyPressed = e.which;
-        changeDirection(keyPressed);
-        keyReleased = true;
+        if (keyPressed == 37 || keyPressed == 38 || keyPressed == 39 || keyPressed == 40) {
+            changeDirection(keyPressed);
+        }
     });
 
     function changeDirection(keyPressed) {
         if (keyPressed == 40) {
             if (direction != 'up') {
-                direction = 'down';
-                snake[0].x = snake[0].oldX;
-                snake[0].y = snake[0].oldY + disp;
+                goDown();
+            } else {
+                goUp();
             }
         } else if (keyPressed == 38) {
             if (direction != 'down') {
-                direction = 'up';
-                snake[0].x = snake[0].oldX;
-                snake[0].y = snake[0].oldY - disp;
+                goUp();
+            } else {
+                goDown();
             }
         } else if (keyPressed == 37) {
             if (direction != 'right') {
-                direction = 'left';
-                snake[0].x = snake[0].oldX - disp;
-                snake[0].y = snake[0].oldY;
+                goLeft();
+            } else {
+                goRight();
             }
         } else if (keyPressed == 39) {
             if (direction != 'left') {
-                direction = 'right';
-                snake[0].x = snake[0].oldX + disp;
-                snake[0].y = snake[0].oldY;
+                goRight();
+            } else {
+                goLeft();
             }
+        } else {
+
         }
     }
 
-    $(document).click(function () {
-        stopGame();
-    });
+    function goDown() {
+        direction = 'down';
+        snake[0].x = snake[0].oldX;
+        snake[0].y = snake[0].oldY + disp;
+    }
+
+    function goUp() {
+        direction = 'up';
+        snake[0].x = snake[0].oldX;
+        snake[0].y = snake[0].oldY - disp;
+    }
+
+    function goLeft() {
+        direction = 'left';
+        snake[0].x = snake[0].oldX - disp;
+        snake[0].y = snake[0].oldY;
+    }
+
+    function goRight() {
+        direction = 'right';
+        snake[0].x = snake[0].oldX + disp;
+        snake[0].y = snake[0].oldY;
+    }
 
 });
