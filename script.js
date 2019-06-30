@@ -163,9 +163,7 @@ $(function () {
 
     $(document).keydown(function (e) {
         keyPressed = e.which;
-        if (keyPressed == 37 || keyPressed == 38 || keyPressed == 39 || keyPressed == 40) {
-            changeDirection(keyPressed);
-        }
+        changeDirection(keyPressed);
     });
 
     function changeDirection(keyPressed) {
@@ -194,7 +192,15 @@ $(function () {
                 goLeft();
             }
         } else {
-
+            if(direction == 'down') {
+                goDown();
+            } else if(direction == 'up') {
+                goUp();
+            } else if(direction == 'left') {
+                goLeft();
+            } else if(direction == 'right') {
+                goRight();
+            }
         }
     }
 
