@@ -13,81 +13,59 @@ $(function () {
     var direction = 'down';
     var score = 0;
     var keyPressed = 40;
-    var snake = [{
-        x: 200,
-        y: 40,
-        oldX: 0,
-        oldY: 0
-    }, {
-        x: 200,
-        y: 30,
-        oldX: 0,
-        oldY: 0
-    }, {
-        x: 200,
-        y: 20,
-        oldX: 0,
-        oldY: 0
-    },
-    {
-        x: 200,
-        y: 10,
-        oldX: 0,
-        oldY: 0
-    },
+    var snake = [
+        { x: 200, y: 40, oldX: 0, oldY: 0 },
+        { x: 200, y: 30, oldX: 0, oldY: 0 },
+        { x: 200, y: 20, oldX: 0, oldY: 0 },
+        { x: 200, y: 10, oldX: 0, oldY: 0 },
     ];
     var food = {
         x: 0,
         y: 0,
         eaten: true
     };
-    var gameLoop;
 
-    init();
+    var game;
 
-    function init() {
-        startGame();
-    }
+    startGame();
 
     function startGame() {
-        // gameLoop = requestAnimationFrame(fillSnake);
-        gameLoop = setInterval(fillSnake, 100);
+        game = setInterval(gameLoop, 100);
     }
 
     function stopGame() {
-        // cancelAnimationFrame(gameLoop);
-        clearInterval(gameLoop);
+        clearInterval(game);
     }
 
-    var counter = 0;
-
-    function fillSnake() {
-        console.log('Loop running')
+    function gameLoop() {
         clearCanvas();
-        fillScore();
-        fillFood();
+        drawScore();
+        drawFood();
+        drawSnake();
+    }
+
+    function drawSnake() {
         ctx.fillStyle = 'yellow';
         $.each(snake, function (index, value) {
-            // debugger
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
             snake[index].oldX = value.x;
             snake[index].oldY = value.y;
             if (index == 0) {
                 if (collided(value.x, value.y)) {
                     stopGame();
+                } else {
+                    if (caughtFood(value.x, value.y)) {
+                        score++;
+                        food.eaten = true;
+                        addToSnake();
+                    }
+                    changeDirection(keyPressed);
                 }
-                if (eaten(value.x, value.y)) {
-                    score++;
-                    food.eaten = true;
-                    addToSnake();
-                }
-                changeDirection(keyPressed);
             } else {
                 snake[index].x = snake[index - 1].oldX;
                 snake[index].y = snake[index - 1].oldY;
             }
         });
-        // gameLoop = requestAnimationFrame(fillSnake);
     }
 
     function addToSnake() {
@@ -103,11 +81,11 @@ $(function () {
         }).length > 0 || x < 0 || x > cWidth || y < 0 || y > cHeight;
     }
 
-    function eaten(x, y) {
+    function caughtFood(x, y) {
         return (x == food.x && y == food.y);
     }
 
-    function fillFood() {
+    function drawFood() {
         ctx.fillStyle = 'red';
         xy = getPositionForFood();
         x = xy.x;
@@ -133,7 +111,6 @@ $(function () {
                 }
             });
             xy = getEmptyPosition(xArray, yArray);
-            return xy;
         } else {
             xy = food;
         }
@@ -159,7 +136,7 @@ $(function () {
         return result;
     }
 
-    function fillScore() {
+    function drawScore() {
         ctx.font = 'bold 102px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
