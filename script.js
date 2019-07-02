@@ -13,10 +13,10 @@ $(function () {
     var keyPressed = 40;
     var keyPressPending = false;
     var snake = [
-        { x: 200, y: 40, oldX: 0, oldY: 0 },
-        { x: 200, y: 30, oldX: 0, oldY: 0 },
-        { x: 200, y: 20, oldX: 0, oldY: 0 },
-        { x: 200, y: 10, oldX: 0, oldY: 0 },
+        { x: 200, y: 40, oldX: 0, oldY: 0, drawn: false },
+        { x: 200, y: 30, oldX: 0, oldY: 0, drawn: false },
+        { x: 200, y: 20, oldX: 0, oldY: 0, drawn: false },
+        { x: 200, y: 10, oldX: 0, oldY: 0, drawn: false },
     ];
     var food = {
         x: 50,
@@ -29,11 +29,12 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 100);
+        game = setInterval(gameLoop, 1000);
     }
 
     function stopGame() {
         clearInterval(game);
+        console.log('Game over');
     }
 
     function gameLoop() {
@@ -47,8 +48,7 @@ $(function () {
         ctx.fillStyle = 'yellow';
         $.each(snake, function (index, value) {
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
-            snake[index].oldX = value.x;
-            snake[index].oldY = value.y;
+            snake[index].drawn = true;
             if (index == 0) {
                 if (collided(value.x, value.y)) {
                     stopGame();
@@ -58,13 +58,10 @@ $(function () {
                         updateFoodEatenFlag();
                         makeSnakeBigger();
                     }
-                    moveSnake(keyPressed);
                 }
-            } else {
-                snake[index].x = snake[index - 1].oldX;
-                snake[index].y = snake[index - 1].oldY;
             }
             if (index == snake.length - 1) {
+                moveSnake(keyPressed);
                 keyPressPending = false;
             }
         });
@@ -162,8 +159,9 @@ $(function () {
 
     $(document).keydown(function (e) {
         keyPressed = e.which;
-        if (keyPressPending == false)
+        if (keyPressPending == false) {
             moveSnake(keyPressed);
+        }
     });
 
     function moveSnake(keyPressed) {
@@ -206,27 +204,81 @@ $(function () {
     }
 
     function moveDown() {
-        direction = 'down';
-        snake[0].x = snake[0].oldX;
-        snake[0].y = snake[0].oldY + blockSize;
+        moveHeadDown();
+        moveBody();
     }
 
     function moveUp() {
-        direction = 'up';
-        snake[0].x = snake[0].oldX;
-        snake[0].y = snake[0].oldY - blockSize;
+        moveHeadUp();
+        moveBody();
     }
 
     function moveLeft() {
-        direction = 'left';
-        snake[0].x = snake[0].oldX - blockSize;
-        snake[0].y = snake[0].oldY;
+        moveHeadLeft();
+        moveBody();
     }
 
     function moveRight() {
-        direction = 'right';
-        snake[0].x = snake[0].oldX + blockSize;
-        snake[0].y = snake[0].oldY;
+        moveHeadRight();
+        moveBody();
+    }
+
+    function moveHeadDown() {
+        if (snake[0].drawn == true) {
+            updateOldXY(0, snake[0].x, snake[0].y);
+            direction = 'down';
+            snake[0].x = snake[0].x;
+            snake[0].y = snake[0].y + blockSize;
+            snake[0].drawn = false;
+        }
+    }
+
+    function moveHeadUp() {
+        if (snake[0].drawn == true) {
+            updateOldXY(0, snake[0].x, snake[0].y);
+            direction = 'up';
+            snake[0].x = snake[0].x;
+            snake[0].y = snake[0].y - blockSize;
+            snake[0].drawn = false;
+        }
+    }
+
+    function moveHeadLeft() {
+        if (snake[0].drawn == true) {
+            updateOldXY(0, snake[0].x, snake[0].y);
+            direction = 'left';
+            snake[0].x = snake[0].x - blockSize;
+            snake[0].y = snake[0].y;
+            snake[0].drawn = false;
+        }
+    }
+
+    function moveHeadRight() {
+        if (snake[0].drawn == true) {
+            updateOldXY(0, snake[0].x, snake[0].y);
+            direction = 'right';
+            snake[0].x = snake[0].x + blockSize;
+            snake[0].y = snake[0].y;
+            snake[0].drawn = false;
+        }
+    }
+
+    function moveBody() {
+        $.each(snake, function (index, value) {
+            if (index != 0) {
+                if (snake[index].drawn == true) {
+                    updateOldXY(index, value.x, value.y);
+                    snake[index].x = snake[index - 1].oldX;
+                    snake[index].y = snake[index - 1].oldY;
+                    snake[index].drawn = false;
+                }
+            }
+        });
+    }
+
+    function updateOldXY(index, x, y) {
+        snake[index].oldX = x;
+        snake[index].oldY = y;
     }
 
 });
