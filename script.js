@@ -29,7 +29,7 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 1000);
+        game = setInterval(gameLoop, 100);
     }
 
     function stopGame() {
@@ -61,7 +61,7 @@ $(function () {
                 }
             }
             if (index == snake.length - 1) {
-                moveSnake(keyPressed);
+                moveSnake(keyPressed, false);
                 keyPressPending = false;
             }
         });
@@ -160,106 +160,138 @@ $(function () {
     $(document).keydown(function (e) {
         keyPressed = e.which;
         if (keyPressPending == false) {
-            moveSnake(keyPressed);
+            moveSnake(keyPressed, true);
         }
     });
 
-    function moveSnake(keyPressed) {
+    function moveSnake(keyPressed, keyPressEvent = false) {
         keyPressPending = true;
         if (keyPressed == 40) {
             if (direction != 'up') {
-                moveDown();
+                moveDown(keyPressEvent);
             } else {
-                moveUp();
+                moveUp(keyPressEvent);
             }
         } else if (keyPressed == 38) {
             if (direction != 'down') {
-                moveUp();
+                moveUp(keyPressEvent);
             } else {
-                moveDown();
+                moveDown(keyPressEvent);
             }
         } else if (keyPressed == 37) {
             if (direction != 'right') {
-                moveLeft();
+                moveLeft(keyPressEvent);
             } else {
-                moveRight();
+                moveRight(keyPressEvent);
             }
         } else if (keyPressed == 39) {
             if (direction != 'left') {
-                moveRight();
+                moveRight(keyPressEvent);
             } else {
-                moveLeft();
+                moveLeft(keyPressEvent);
             }
         } else {
             if (direction == 'down') {
-                moveDown();
+                moveDown(keyPressEvent);
             } else if (direction == 'up') {
-                moveUp();
+                moveUp(keyPressEvent);
             } else if (direction == 'left') {
-                moveLeft();
+                moveLeft(keyPressEvent);
             } else if (direction == 'right') {
-                moveRight();
+                moveRight(keyPressEvent);
             }
         }
     }
 
-    function moveDown() {
-        moveHeadDown();
+    function moveDown(keyPressEvent) {
+        moveHeadDown(keyPressEvent);
         moveBody();
     }
 
-    function moveUp() {
-        moveHeadUp();
+    function moveUp(keyPressEvent) {
+        moveHeadUp(keyPressEvent);
         moveBody();
     }
 
-    function moveLeft() {
-        moveHeadLeft();
+    function moveLeft(keyPressEvent) {
+        moveHeadLeft(keyPressEvent);
         moveBody();
     }
 
-    function moveRight() {
-        moveHeadRight();
+    function moveRight(keyPressEvent) {
+        moveHeadRight(keyPressEvent);
         moveBody();
     }
 
-    function moveHeadDown() {
+    function moveHeadDown(keyPressEvent) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
             direction = 'down';
             snake[0].x = snake[0].x;
             snake[0].y = snake[0].y + blockSize;
             snake[0].drawn = false;
+        } else {
+            if (keyPressEvent) {
+                updateOldXY(0, snake[0].oldX, snake[0].oldY);
+                direction = 'down';
+                snake[0].x = snake[0].oldX;
+                snake[0].y = snake[0].oldY + blockSize;
+                snake[0].drawn = false;
+            }
         }
     }
 
-    function moveHeadUp() {
+    function moveHeadUp(keyPressEvent) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
             direction = 'up';
             snake[0].x = snake[0].x;
             snake[0].y = snake[0].y - blockSize;
             snake[0].drawn = false;
+        } else {
+            if (keyPressEvent) {
+                updateOldXY(0, snake[0].oldX, snake[0].oldY);
+                direction = 'up';
+                snake[0].x = snake[0].oldX;
+                snake[0].y = snake[0].oldY - blockSize;
+                snake[0].drawn = false;
+            }
         }
     }
 
-    function moveHeadLeft() {
+    function moveHeadLeft(keyPressEvent) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
             direction = 'left';
             snake[0].x = snake[0].x - blockSize;
             snake[0].y = snake[0].y;
             snake[0].drawn = false;
+        } else {
+            if (keyPressEvent) {
+                updateOldXY(0, snake[0].oldX, snake[0].oldY);
+                direction = 'left';
+                snake[0].x = snake[0].oldX - blockSize;
+                snake[0].y = snake[0].oldY;
+                snake[0].drawn = false;
+            }
         }
     }
 
-    function moveHeadRight() {
+    function moveHeadRight(keyPressEvent) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
             direction = 'right';
             snake[0].x = snake[0].x + blockSize;
             snake[0].y = snake[0].y;
             snake[0].drawn = false;
+        } else {
+            if (keyPressEvent) {
+                updateOldXY(0, snake[0].oldX, snake[0].oldY);
+                direction = 'right';
+                snake[0].x = snake[0].oldX + blockSize;
+                snake[0].y = snake[0].oldY;
+                snake[0].drawn = false;
+            }
         }
     }
 
