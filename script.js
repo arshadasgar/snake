@@ -8,15 +8,37 @@ $(function () {
     var snakeHeight = 10;
     var snakeWidth = 10;
     var blockSize = 10;
-    var direction = 'down';
     var score = 0;
     var keyPressed = 40;
     var keyPressPending = false;
-    var snake = [
-        { x: 200, y: 40, oldX: 0, oldY: 0, drawn: false },
-        { x: 200, y: 30, oldX: 0, oldY: 0, drawn: false },
-        { x: 200, y: 20, oldX: 0, oldY: 0, drawn: false },
-        { x: 200, y: 10, oldX: 0, oldY: 0, drawn: false },
+    var snake = [{
+            x: 200,
+            y: 40,
+            oldX: 0,
+            oldY: 0,
+            drawn: false
+        },
+        {
+            x: 200,
+            y: 30,
+            oldX: 0,
+            oldY: 0,
+            drawn: false
+        },
+        {
+            x: 200,
+            y: 20,
+            oldX: 0,
+            oldY: 0,
+            drawn: false
+        },
+        {
+            x: 200,
+            y: 10,
+            oldX: 0,
+            oldY: 0,
+            drawn: false
+        },
     ];
     var food = {
         x: 50,
@@ -29,7 +51,7 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 100);
+        game = setInterval(gameLoop, 200);
     }
 
     function stopGame() {
@@ -158,82 +180,50 @@ $(function () {
     }
 
     $(document).keydown(function (e) {
-        keyPressed = e.which;
-        if (keyPressPending == false) {
-            moveSnake(keyPressed, true);
+        if ($.inArray(e.which, [37, 38, 39, 40]) != -1) {
+            keyPressed = checkKeyAllowed(e.which);
+            if (keyPressPending == false) {
+                moveSnake(keyPressed, true);
+            }
         }
     });
 
-    function moveSnake(keyPressed, keyPressEvent = false) {
+    function checkKeyAllowed(tempKey) {
+        if (tempKey == 40) {
+            keyPressed = (keyPressed != 38) ? 40 : keyPressed;
+        } else if (tempKey == 38) {
+            keyPressed = (keyPressed != 40) ? 38 : keyPressed;
+        } else if (tempKey == 37) {
+            keyPressed = (keyPressed != 39) ? 37 : keyPressed;
+        } else if (tempKey == 39) {
+            keyPressed = (keyPressed != 37) ? 39 : keyPressed;
+        }
+        return keyPressed;
+    }
+
+    function moveSnake(keyPressed, isKeyPress) {
         keyPressPending = true;
         if (keyPressed == 40) {
-            if (direction != 'up') {
-                moveDown(keyPressEvent);
-            } else {
-                moveUp(keyPressEvent);
-            }
+            moveHeadDown(isKeyPress);
         } else if (keyPressed == 38) {
-            if (direction != 'down') {
-                moveUp(keyPressEvent);
-            } else {
-                moveDown(keyPressEvent);
-            }
+            moveHeadUp(isKeyPress);
         } else if (keyPressed == 37) {
-            if (direction != 'right') {
-                moveLeft(keyPressEvent);
-            } else {
-                moveRight(keyPressEvent);
-            }
+            moveHeadLeft(isKeyPress);
         } else if (keyPressed == 39) {
-            if (direction != 'left') {
-                moveRight(keyPressEvent);
-            } else {
-                moveLeft(keyPressEvent);
-            }
-        } else {
-            if (direction == 'down') {
-                moveDown(keyPressEvent);
-            } else if (direction == 'up') {
-                moveUp(keyPressEvent);
-            } else if (direction == 'left') {
-                moveLeft(keyPressEvent);
-            } else if (direction == 'right') {
-                moveRight(keyPressEvent);
-            }
+            moveHeadRight(isKeyPress);
         }
-    }
-
-    function moveDown(keyPressEvent) {
-        moveHeadDown(keyPressEvent);
         moveBody();
     }
 
-    function moveUp(keyPressEvent) {
-        moveHeadUp(keyPressEvent);
-        moveBody();
-    }
-
-    function moveLeft(keyPressEvent) {
-        moveHeadLeft(keyPressEvent);
-        moveBody();
-    }
-
-    function moveRight(keyPressEvent) {
-        moveHeadRight(keyPressEvent);
-        moveBody();
-    }
-
-    function moveHeadDown(keyPressEvent) {
+    function moveHeadDown(isKeyPress) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
-            direction = 'down';
             snake[0].x = snake[0].x;
             snake[0].y = snake[0].y + blockSize;
             snake[0].drawn = false;
         } else {
-            if (keyPressEvent) {
+            if (isKeyPress) {
                 updateOldXY(0, snake[0].oldX, snake[0].oldY);
-                direction = 'down';
                 snake[0].x = snake[0].oldX;
                 snake[0].y = snake[0].oldY + blockSize;
                 snake[0].drawn = false;
@@ -241,17 +231,15 @@ $(function () {
         }
     }
 
-    function moveHeadUp(keyPressEvent) {
+    function moveHeadUp(isKeyPress) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
-            direction = 'up';
             snake[0].x = snake[0].x;
             snake[0].y = snake[0].y - blockSize;
             snake[0].drawn = false;
         } else {
-            if (keyPressEvent) {
+            if (isKeyPress) {
                 updateOldXY(0, snake[0].oldX, snake[0].oldY);
-                direction = 'up';
                 snake[0].x = snake[0].oldX;
                 snake[0].y = snake[0].oldY - blockSize;
                 snake[0].drawn = false;
@@ -259,17 +247,15 @@ $(function () {
         }
     }
 
-    function moveHeadLeft(keyPressEvent) {
+    function moveHeadLeft(isKeyPress) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
-            direction = 'left';
             snake[0].x = snake[0].x - blockSize;
             snake[0].y = snake[0].y;
             snake[0].drawn = false;
         } else {
-            if (keyPressEvent) {
+            if (isKeyPress) {
                 updateOldXY(0, snake[0].oldX, snake[0].oldY);
-                direction = 'left';
                 snake[0].x = snake[0].oldX - blockSize;
                 snake[0].y = snake[0].oldY;
                 snake[0].drawn = false;
@@ -277,17 +263,15 @@ $(function () {
         }
     }
 
-    function moveHeadRight(keyPressEvent) {
+    function moveHeadRight(isKeyPress) {
         if (snake[0].drawn == true) {
             updateOldXY(0, snake[0].x, snake[0].y);
-            direction = 'right';
             snake[0].x = snake[0].x + blockSize;
             snake[0].y = snake[0].y;
             snake[0].drawn = false;
         } else {
-            if (keyPressEvent) {
+            if (isKeyPress) {
                 updateOldXY(0, snake[0].oldX, snake[0].oldY);
-                direction = 'right';
                 snake[0].x = snake[0].oldX + blockSize;
                 snake[0].y = snake[0].oldY;
                 snake[0].drawn = false;
