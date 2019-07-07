@@ -51,7 +51,7 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 1000);
+        game = setInterval(gameLoop, 500);
     }
 
     function stopGame() {
@@ -116,15 +116,13 @@ $(function () {
 
     function drawFood() {
         ctx.fillStyle = 'red';
-        xy = getPositionForFood();
-        x = xy.x;
-        y = xy.y;
+        let xy = getPositionForFood();
         food = {
-            x: x,
-            y: y,
+            x: xy.x,
+            y: xy.y,
             eaten: false
         };
-        ctx.fillRect(x, y, snakeWidth, snakeHeight);
+        ctx.fillRect(food.x, food.y, snakeWidth, snakeHeight);
     }
 
     function getPositionForFood() {
