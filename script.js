@@ -233,7 +233,6 @@ $(function () {
             snake[0].drawn = false;
         } else {
             if (isKeyPress) {
-                updateOldXY(0, snake[0].oldX, snake[0].oldY);
                 snake[0].x = snake[0].oldX;
                 snake[0].y = snake[0].oldY + blockSize;
                 snake[0].drawn = false;
@@ -249,7 +248,6 @@ $(function () {
             snake[0].drawn = false;
         } else {
             if (isKeyPress) {
-                updateOldXY(0, snake[0].oldX, snake[0].oldY);
                 snake[0].x = snake[0].oldX;
                 snake[0].y = snake[0].oldY - blockSize;
                 snake[0].drawn = false;
@@ -265,7 +263,6 @@ $(function () {
             snake[0].drawn = false;
         } else {
             if (isKeyPress) {
-                updateOldXY(0, snake[0].oldX, snake[0].oldY);
                 snake[0].x = snake[0].oldX - blockSize;
                 snake[0].y = snake[0].oldY;
                 snake[0].drawn = false;
@@ -281,7 +278,6 @@ $(function () {
             snake[0].drawn = false;
         } else {
             if (isKeyPress) {
-                updateOldXY(0, snake[0].oldX, snake[0].oldY);
                 snake[0].x = snake[0].oldX + blockSize;
                 snake[0].y = snake[0].oldY;
                 snake[0].drawn = false;
