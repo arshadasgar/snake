@@ -51,7 +51,7 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 200);
+        game = setInterval(gameLoop, 1000);
     }
 
     function stopGame() {
@@ -203,16 +203,26 @@ $(function () {
 
     function moveSnake(keyPressed, isKeyPress) {
         keyPressPending = true;
-        if (keyPressed == 40) {
-            moveHeadDown(isKeyPress);
-        } else if (keyPressed == 38) {
-            moveHeadUp(isKeyPress);
-        } else if (keyPressed == 37) {
-            moveHeadLeft(isKeyPress);
-        } else if (keyPressed == 39) {
-            moveHeadRight(isKeyPress);
-        }
-        moveBody();
+        $.each(snake, function (index, value) {
+            if (index == 0) {
+                if (keyPressed == 40) {
+                    moveHeadDown(isKeyPress);
+                } else if (keyPressed == 38) {
+                    moveHeadUp(isKeyPress);
+                } else if (keyPressed == 37) {
+                    moveHeadLeft(isKeyPress);
+                } else if (keyPressed == 39) {
+                    moveHeadRight(isKeyPress);
+                }
+            } else {
+                if (snake[index].drawn == true) {
+                    updateOldXY(index, value.x, value.y);
+                    snake[index].x = snake[index - 1].oldX;
+                    snake[index].y = snake[index - 1].oldY;
+                    snake[index].drawn = false;
+                }
+            }
+        });
     }
 
     function moveHeadDown(isKeyPress) {
@@ -277,19 +287,6 @@ $(function () {
                 snake[0].drawn = false;
             }
         }
-    }
-
-    function moveBody() {
-        $.each(snake, function (index, value) {
-            if (index != 0) {
-                if (snake[index].drawn == true) {
-                    updateOldXY(index, value.x, value.y);
-                    snake[index].x = snake[index - 1].oldX;
-                    snake[index].y = snake[index - 1].oldY;
-                    snake[index].drawn = false;
-                }
-            }
-        });
     }
 
     function updateOldXY(index, x, y) {
