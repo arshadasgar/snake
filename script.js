@@ -12,33 +12,33 @@ $(function () {
     var keyPressed = 40;
     var keyPressPending = false;
     var snake = [{
-            x: 200,
-            y: 40,
-            oldX: 0,
-            oldY: 0,
-            drawn: false
-        },
-        {
-            x: 200,
-            y: 30,
-            oldX: 0,
-            oldY: 0,
-            drawn: false
-        },
-        {
-            x: 200,
-            y: 20,
-            oldX: 0,
-            oldY: 0,
-            drawn: false
-        },
-        {
-            x: 200,
-            y: 10,
-            oldX: 0,
-            oldY: 0,
-            drawn: false
-        },
+        x: 200,
+        y: 40,
+        oldX: 0,
+        oldY: 0,
+        drawn: false
+    },
+    {
+        x: 200,
+        y: 30,
+        oldX: 0,
+        oldY: 0,
+        drawn: false
+    },
+    {
+        x: 200,
+        y: 20,
+        oldX: 0,
+        oldY: 0,
+        drawn: false
+    },
+    {
+        x: 200,
+        y: 10,
+        oldX: 0,
+        oldY: 0,
+        drawn: false
+    },
     ];
     var food = {
         x: 50,
@@ -51,7 +51,7 @@ $(function () {
     startGame();
 
     function startGame() {
-        game = setInterval(gameLoop, 500);
+        game = setInterval(gameLoop, 300);
     }
 
     function stopGame() {
@@ -61,15 +61,17 @@ $(function () {
 
     function gameLoop() {
         clearCanvas();
-        drawScore();
         drawFood();
+        moveSnake(keyPressed);
         drawSnake();
     }
 
     function drawSnake() {
-        ctx.fillStyle = 'yellow';
+        ctx.fillStyle = 'green';
+        ctx.strokeStyle = 'white';
         $.each(snake, function (index, value) {
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
+            ctx.strokeRect(value.x, value.y, snakeWidth, snakeHeight);
             snake[index].drawn = true;
             if (index == 0) {
                 if (collided(value.x, value.y)) {
@@ -83,7 +85,6 @@ $(function () {
                 }
             }
             if (index == snake.length - 1) {
-                moveSnake(keyPressed, false);
                 keyPressPending = false;
             }
         });
@@ -91,6 +92,7 @@ $(function () {
 
     function updateScore() {
         score++;
+        $('#score').text(score);
     }
 
     function updateFoodEatenFlag() {
@@ -163,16 +165,6 @@ $(function () {
         return result;
     }
 
-    function drawScore() {
-        ctx.font = 'bold 102px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'rgba(255,255,255, 0.2)';
-        let x = cWidth / 2;
-        let y = cHeight / 2;
-        ctx.fillText(score, x, y);
-    }
-
     function clearCanvas() {
         ctx.clearRect(0, 0, cWidth, cHeight);
     }
@@ -181,7 +173,7 @@ $(function () {
         if ($.inArray(e.which, [37, 38, 39, 40]) != -1) {
             keyPressed = checkKeyAllowed(e.which);
             if (keyPressPending == false) {
-                moveSnake(keyPressed, true);
+                moveSnake(keyPressed);
             }
         }
     });
@@ -200,93 +192,30 @@ $(function () {
         return key;
     }
 
-    function moveSnake(keyPressed, isKeyPress) {
+    function moveSnake(keyPressed) {
         keyPressPending = true;
         $.each(snake, function (index, value) {
-            if (index == 0) {
-                if (keyPressed == 40) {
-                    moveHeadDown(isKeyPress);
-                } else if (keyPressed == 38) {
-                    moveHeadUp(isKeyPress);
-                } else if (keyPressed == 37) {
-                    moveHeadLeft(isKeyPress);
-                } else if (keyPressed == 39) {
-                    moveHeadRight(isKeyPress);
-                }
-            } else {
-                if (snake[index].drawn == true) {
-                    updateOldXY(index, value.x, value.y);
+            if (snake[index].drawn == true) {
+                snake[index].oldX = value.x;
+                snake[index].oldY = value.y;
+                if (index == 0) {
+                    if (keyPressed == 40) {
+                        snake[0].y = snake[0].y + blockSize;
+                    } else if (keyPressed == 38) {
+                        snake[0].y = snake[0].y - blockSize;
+                    } else if (keyPressed == 37) {
+                        snake[0].x = snake[0].x - blockSize;
+                    } else if (keyPressed == 39) {
+                        snake[0].x = snake[0].x + blockSize;
+                    }
+                } else {
                     snake[index].x = snake[index - 1].oldX;
                     snake[index].y = snake[index - 1].oldY;
-                    snake[index].drawn = false;
                 }
+                snake[index].drawn = false;
             }
+
         });
-    }
-
-    function moveHeadDown(isKeyPress) {
-        if (snake[0].drawn == true) {
-            updateOldXY(0, snake[0].x, snake[0].y);
-            snake[0].x = snake[0].x;
-            snake[0].y = snake[0].y + blockSize;
-            snake[0].drawn = false;
-        } else {
-            if (isKeyPress) {
-                snake[0].x = snake[0].oldX;
-                snake[0].y = snake[0].oldY + blockSize;
-                snake[0].drawn = false;
-            }
-        }
-    }
-
-    function moveHeadUp(isKeyPress) {
-        if (snake[0].drawn == true) {
-            updateOldXY(0, snake[0].x, snake[0].y);
-            snake[0].x = snake[0].x;
-            snake[0].y = snake[0].y - blockSize;
-            snake[0].drawn = false;
-        } else {
-            if (isKeyPress) {
-                snake[0].x = snake[0].oldX;
-                snake[0].y = snake[0].oldY - blockSize;
-                snake[0].drawn = false;
-            }
-        }
-    }
-
-    function moveHeadLeft(isKeyPress) {
-        if (snake[0].drawn == true) {
-            updateOldXY(0, snake[0].x, snake[0].y);
-            snake[0].x = snake[0].x - blockSize;
-            snake[0].y = snake[0].y;
-            snake[0].drawn = false;
-        } else {
-            if (isKeyPress) {
-                snake[0].x = snake[0].oldX - blockSize;
-                snake[0].y = snake[0].oldY;
-                snake[0].drawn = false;
-            }
-        }
-    }
-
-    function moveHeadRight(isKeyPress) {
-        if (snake[0].drawn == true) {
-            updateOldXY(0, snake[0].x, snake[0].y);
-            snake[0].x = snake[0].x + blockSize;
-            snake[0].y = snake[0].y;
-            snake[0].drawn = false;
-        } else {
-            if (isKeyPress) {
-                snake[0].x = snake[0].oldX + blockSize;
-                snake[0].y = snake[0].oldY;
-                snake[0].drawn = false;
-            }
-        }
-    }
-
-    function updateOldXY(index, x, y) {
-        snake[index].oldX = x;
-        snake[index].oldY = y;
     }
 
 });
