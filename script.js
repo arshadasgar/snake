@@ -187,16 +187,17 @@ $(function () {
     });
 
     function checkKeyAllowed(tempKey) {
+        let key;
         if (tempKey == 40) {
-            keyPressed = (keyPressed != 38) ? 40 : keyPressed;
+            key = (keyPressed != 38) ? tempKey : keyPressed;
         } else if (tempKey == 38) {
-            keyPressed = (keyPressed != 40) ? 38 : keyPressed;
+            key = (keyPressed != 40) ? tempKey : keyPressed;
         } else if (tempKey == 37) {
-            keyPressed = (keyPressed != 39) ? 37 : keyPressed;
+            key = (keyPressed != 39) ? tempKey : keyPressed;
         } else if (tempKey == 39) {
-            keyPressed = (keyPressed != 37) ? 39 : keyPressed;
+            key = (keyPressed != 37) ? tempKey : keyPressed;
         }
-        return keyPressed;
+        return key;
     }
 
     function moveSnake(keyPressed, isKeyPress) {
