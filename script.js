@@ -67,7 +67,8 @@ $(function () {
     }
 
     function drawSnake() {
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'red';
+        ctx.lineWidth = 2;
         ctx.strokeStyle = 'white';
         $.each(snake, function (index, value) {
             ctx.fillRect(value.x, value.y, snakeWidth, snakeHeight);
