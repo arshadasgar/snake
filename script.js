@@ -10,7 +10,6 @@ $(function () {
     var blockSize = 10;
     var score = 0;
     var keyPressed = 40;
-    var keyPressPending = false;
     var snake = [{
         x: 200,
         y: 40,
@@ -174,9 +173,6 @@ $(function () {
     $(document).keydown(function (e) {
         if ($.inArray(e.which, [37, 38, 39, 40]) != -1) {
             keyPressed = checkKeyAllowed(e.which);
-            if (keyPressPending == false) {
-                //moveSnake(keyPressed);
-            }
         }
     });
 
