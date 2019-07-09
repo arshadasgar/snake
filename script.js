@@ -56,6 +56,7 @@ $(function () {
 
     function stopGame() {
         clearInterval(game);
+        alert('Game over');
         console.log('Game over');
     }
 
@@ -174,7 +175,7 @@ $(function () {
         if ($.inArray(e.which, [37, 38, 39, 40]) != -1) {
             keyPressed = checkKeyAllowed(e.which);
             if (keyPressPending == false) {
-                moveSnake(keyPressed);
+                //moveSnake(keyPressed);
             }
         }
     });
