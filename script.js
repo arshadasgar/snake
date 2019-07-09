@@ -56,7 +56,6 @@ $(function () {
     function stopGame() {
         clearInterval(game);
         alert('Game over');
-        console.log('Game over');
     }
 
     function gameLoop() {
@@ -84,9 +83,6 @@ $(function () {
                         makeSnakeBigger();
                     }
                 }
-            }
-            if (index == snake.length - 1) {
-                keyPressPending = false;
             }
         });
     }
@@ -191,7 +187,6 @@ $(function () {
     }
 
     function moveSnake(keyPressed) {
-        keyPressPending = true;
         $.each(snake, function (index, value) {
             if (snake[index].drawn == true) {
                 snake[index].oldX = value.x;
