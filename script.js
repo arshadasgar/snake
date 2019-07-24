@@ -8,8 +8,9 @@ $(function () {
     var snakeHeight = 10;
     var snakeWidth = 10;
     var blockSize = 10;
+
     var score = 0;
-    var keyPressed = 40;
+
     var snake = [{
         x: 200,
         y: 40,
@@ -44,6 +45,12 @@ $(function () {
         y: 50,
         eaten: false
     };
+    const LEFT = 37;
+    const UP = 38;
+    const RIGHT = 39;
+    const DOWN = 40;
+
+    var keyPressed = DOWN;
 
     var game;
 
@@ -84,6 +91,7 @@ $(function () {
                     }
                 }
             }
+
         });
     }
 
@@ -167,21 +175,21 @@ $(function () {
     }
 
     $(document).keydown(function (e) {
-        if ($.inArray(e.which, [37, 38, 39, 40]) != -1) {
+        if ($.inArray(e.which, [LEFT, UP, RIGHT, DOWN]) != -1) {
             keyPressed = checkKeyAllowed(e.which);
         }
     });
 
     function checkKeyAllowed(tempKey) {
         let key;
-        if (tempKey == 40) {
-            key = (keyPressed != 38) ? tempKey : keyPressed;
-        } else if (tempKey == 38) {
-            key = (keyPressed != 40) ? tempKey : keyPressed;
-        } else if (tempKey == 37) {
-            key = (keyPressed != 39) ? tempKey : keyPressed;
-        } else if (tempKey == 39) {
-            key = (keyPressed != 37) ? tempKey : keyPressed;
+        if (tempKey == DOWN) {
+            key = (keyPressed != UP) ? tempKey : keyPressed;
+        } else if (tempKey == UP) {
+            key = (keyPressed != DOWN) ? tempKey : keyPressed;
+        } else if (tempKey == LEFT) {
+            key = (keyPressed != RIGHT) ? tempKey : keyPressed;
+        } else if (tempKey == RIGHT) {
+            key = (keyPressed != LEFT) ? tempKey : keyPressed;
         }
         return key;
     }
@@ -192,13 +200,13 @@ $(function () {
                 snake[index].oldX = value.x;
                 snake[index].oldY = value.y;
                 if (index == 0) {
-                    if (keyPressed == 40) {
+                    if (keyPressed == DOWN) {
                         snake[0].y = snake[0].y + blockSize;
-                    } else if (keyPressed == 38) {
+                    } else if (keyPressed == UP) {
                         snake[0].y = snake[0].y - blockSize;
-                    } else if (keyPressed == 37) {
+                    } else if (keyPressed == LEFT) {
                         snake[0].x = snake[0].x - blockSize;
-                    } else if (keyPressed == 39) {
+                    } else if (keyPressed == RIGHT) {
                         snake[0].x = snake[0].x + blockSize;
                     }
                 } else {
